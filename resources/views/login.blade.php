@@ -128,10 +128,14 @@
                                 <option value="driver">Driver</option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">nama</label>
+                            <input type="text" name="name" class="form-control" placeholder="Masukkan username">
+                        </div>
 
                         <div class="mb-3">
                             <label class="form-label">email</label>
-                            <input type="email" value ="{{ old('email') }}" name="email" class="form-control" placeholder="Masukkan username">
+                            <input type="email" value ="{{ old('email') }}" name="email" class="form-control" placeholder="Masukkan email">
                         </div>
 
                         <div class="mb-3">
@@ -140,9 +144,9 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
-
-                        <div class="text-center mt-3">
+                        <div class="d-flex justify-content-between mt-3">
                             <a href="#" class="text-muted">Forgot password?</a>
+                            <a href="/register" class="text-muted">Sign up</a>
                         </div>
                     </form>
                 </div>

@@ -1,10 +1,11 @@
 <?php
 
+
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SesiController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [SesiController::class, 'index']);
+Route::get('/', [SesiController::class, 'index'])->name('login');
 Route::post('/', [SesiController::class, 'login']);
 
 Route::middleware(['admin'])->group(function () {
@@ -19,7 +20,8 @@ Route::middleware(['user'])->group(function () {
     });
 });
 
-
+Route::get('/register', [SesiController::class, 'formRegister'])->name('register');
+Route::post('/register', [SesiController::class, 'register'])->name('register.action');
 // Route::get('/admin', [AdminController::class, 'index']);
 // Route::get('/user', [AdminController::class, 'index']);
 

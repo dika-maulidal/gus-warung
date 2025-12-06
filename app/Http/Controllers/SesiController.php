@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,6 +11,11 @@ class SesiController extends Controller
     function index()
     {
         return view('login');
+    }
+
+    function formRegister()
+    {
+        return view('register');
     }
 
     function login(Request $request)
@@ -25,27 +31,64 @@ class SesiController extends Controller
             ]
         );
 
+        $email = $request->email;
+        $password = $request->password;
+
+        // data untuk login
         $infologin = [
-            'email' => $request->email,
-            'password' => $request->password,
+            'email' => $email,
+            'password' => $password,
         ];
 
         if (Auth::attempt($infologin)) {
-            if (Auth::user()->email === 'admin@gmail.com') {
+
+            // setelah login berhasil, baru ambil email dari database
+            $email = Auth::user()->email;
+
+            if (str_ends_with($email, '@admin.com')) {
                 return redirect('/admin');
-            } else if (Auth::user()->email === 'user@gmail.com') {
+
+            } else if (str_ends_with($email, '@user.com')) {
                 return redirect('/user');
+
             } else {
                 return redirect('/driver');
             }
 
         } else {
-            return redirect('')->back()->withErrors('username dan password salah')->withInput();
+            return redirect('')
+                ->back()
+                ->withErrors('username dan password salah')
+                ->withInput();
         }
+
     }
 
-    function logout()
+    function logout(Request $request)
     {
-        return redirect('');
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login');
+    }
+
+    // REGISTER ACTION
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'role' => 'required|in:admin,user,driver',
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('login')->with('success', 'Akun berhasil dibuat!');
     }
 }
