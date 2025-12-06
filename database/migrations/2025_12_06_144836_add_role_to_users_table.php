@@ -10,10 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Tambahkan kolom 'role' dengan tipe string (atau enum jika Anda suka)
-            $table->string('role')->default('user')->after('password');
-        });
+        // Cek dulu, jangan tambah kalau sudah ada kolom 'role'
+        if (!Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                // Tambahkan kolom 'role' dengan tipe string
+                $table->string('role')->default('user')->after('password');
+            });
+        }
     }
 
     /**
@@ -21,9 +24,11 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            // Drop kolom 'role' jika rollback (undo) migration
-            $table->dropColumn('role');
-        });
+        // Cek dulu, jangan drop kalau kolomnya tidak ada
+        if (Schema::hasColumn('users', 'role')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('role');
+            });
+        }
     }
 };
