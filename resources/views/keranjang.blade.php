@@ -141,12 +141,12 @@
                     <li class="nav-item">
                         <a class="nav-link text-black active" href="{{ url('/sell') }}">Penjualan</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link text-black" href="{{ url('/stock') }}">Inventaris</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-black" href="{{ url('/report') }}">Laporan</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link text-black" href="{{ url('/about') }}">About</a>
                     </li>

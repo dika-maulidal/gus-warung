@@ -58,12 +58,12 @@
                     <li class="nav-item">
                         <a class="nav-link text-black active" href="/sell">Penjualan</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link text-black" href="/stock">Inventaris</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-black" href="/report">Laporan</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link text-black" href="/about">About</a>
                     </li>
@@ -187,14 +187,14 @@
 
                             <button class="btn btn-warning text-white w-100" @if($menu->stok == 0) disabled @endif
                                 onclick="addToCart({
-                                                                                                                                                id: {{ $menu->id }},
-                                                                                                                                                    name: '{{ $menu->nama }}',
-                                                                                                                                                    price: {{ round($harga_diskon) }}, 
-                                                                                                                                                    image: '{{ asset($menu->gambar) }}',
-                                                                                                                                                    unit: 'Porsi', 
-                                                                                                                                                    stok: {{ $menu->stok }},
-                                                                                                                                                    diskon: {{ $diskon }}
-                                                                                                                                                                                })">
+                                                                                                                                                                                            id: {{ $menu->id }},
+                                                                                                                                                                                                name: '{{ $menu->nama }}',
+                                                                                                                                                                                                price: {{ round($harga_diskon) }}, 
+                                                                                                                                                                                                image: '{{ asset($menu->gambar) }}',
+                                                                                                                                                                                                unit: 'Porsi', 
+                                                                                                                                                                                                stok: {{ $menu->stok }},
+                                                                                                                                                                                                diskon: {{ $diskon }}
+                                                                                                                                                                                                                            })">
                                 <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
                             </button>
                         </div>
@@ -264,14 +264,14 @@
                             </div>
 
                             <button class="btn btn-warning text-white w-100" @if($menu->stok == 0) disabled @endif onclick="addToCart({
-                                id: {{ $menu->id }},
-                                name: '{{ $menu->nama }}',
-                                price: {{ round($harga_diskon) }},
-                                image: '{{ asset($menu->gambar) }}',
-                                unit: 'Unit',
-                                stok: {{ $menu->stok }},
-                                diskon: {{ $diskon }}
-                            })">
+                                                                            id: {{ $menu->id }},
+                                                                            name: '{{ $menu->nama }}',
+                                                                            price: {{ round($harga_diskon) }},
+                                                                            image: '{{ asset($menu->gambar) }}',
+                                                                            unit: 'Unit',
+                                                                            stok: {{ $menu->stok }},
+                                                                            diskon: {{ $diskon }}
+                                                                        })">
                                 <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
                             </button>
                         </div>
@@ -281,12 +281,34 @@
             @endforeach
 
             @foreach($addons as $menu)
+                @php
+                    // Hitung harga & diskon per produk (Add-ons)
+                    $harga_asli = $menu->harga;
+                    $diskon = $menu->diskon_persen ?? 0;
+                    $harga_diskon = $diskon > 0
+                        ? $harga_asli - ($harga_asli * $diskon / 100)
+                        : $harga_asli;
+
+                    // Logic Status Stok Add-ons (disamakan stylenya dengan minuman)
+                    $stokStatus = 'stock-ready';
+                    $stokText = 'Stok: ' . $menu->stok . ' Porsi';
+
+                    if ($menu->stok < 10 && $menu->stok > 0) {
+                        $stokStatus = 'stock-low';
+                        $stokText = 'Stok: ' . $menu->stok . ' Porsi (Menipis!)';
+                    } elseif ($menu->stok == 0) {
+                        $stokStatus = 'stock-out';
+                        $stokText = 'Stok: Habis';
+                    }
+                @endphp
+
                 <div class="col-md-4 menu-item" data-aos="zoom-in" data-kategori="addon"
                     data-populer="{{ $menu->is_popular ? 'yes' : 'no' }}">
                     <div class="card shadow-sm border-0 drink-card h-100">
                         @if($menu->is_popular)
                             <span class="popular-badge">⭐ Populer</span>
                         @endif
+
                         <img src="{{ asset($menu->gambar) }}" class="card-img-top" alt="{{ $menu->nama }}" />
 
                         <div class="card-body d-flex flex-column">
@@ -296,41 +318,46 @@
                                 {{ $menu->deskripsi }}
                             </p>
 
-                            {{-- Logic Harga Diskon (Add-ons) --}}
-                            @php
-                                $diskon = $menu->diskon_persen ?? 0;
-                                $harga_asli = $menu->harga;
-                                $harga_diskon = $harga_asli * (1 - ($diskon / 100));
-                            @endphp
-
-                            <div class="stock-info {{ $stokStatus }} mb-2">{{ $stokText }}</div>
+                            {{-- Stock info (style sama dengan minuman) --}}
+                            <div class="stock-info {{ $stokStatus }} mb-2">
+                                {{ $stokText }}
+                            </div>
 
                             <div class="price-group">
                                 @if ($diskon > 0)
-                                    <span class="original-price">Rp {{ number_format($harga_asli, 0, ',', '.') }}</span>
-                                    <span class="discount-price">Rp {{ number_format($harga_diskon, 0, ',', '.') }}</span>
-                                    <span class="discount-badge">{{ $diskon }}%</span>
+                                    <span class="original-price">
+                                        Rp {{ number_format($harga_asli, 0, ',', '.') }}
+                                    </span>
+                                    <span class="discount-price">
+                                        Rp {{ number_format($harga_diskon, 0, ',', '.') }}
+                                    </span>
+                                    <span class="discount-badge">
+                                        {{ $diskon }}%
+                                    </span>
                                 @else
-                                    <span class="fw-bold text-warning">Rp {{ number_format($harga_asli, 0, ',', '.') }}</span>
+                                    <span class="fw-bold text-warning">
+                                        Rp {{ number_format($harga_asli, 0, ',', '.') }}
+                                    </span>
                                 @endif
                             </div>
 
-                            <button class="btn btn-warning text-white w-100" @if($menu->stok == 0) disabled @endif
-                                onclick="addToCart({
-                                                                                                                                    id: {{ $menu->id }},
-                                                                                                                                    name: '{{ $menu->nama }}',
-                                                                                                                                    price: {{ round($harga_diskon) }},
-                                                                                                                                    image: '{{ asset($menu->gambar) }}',
-                                                                                                                                    unit: 'Porsi', 
-                                                                                                                                    stok: {{ $menu->stok }},
-                                                                                                                                    diskon: {{ $diskon }}
-                                                                                                                                })">
+                            <button class="btn btn-warning text-white w-100" @if($menu->stok == 0) disabled @endif onclick="addToCart({
+                                                id: {{ $menu->id }},
+                                                name: '{{ $menu->nama }}',
+                                                price: {{ round($harga_diskon) }},
+                                                image: '{{ asset($menu->gambar) }}',
+                                                unit: 'Porsi',
+                                                stok: {{ $menu->stok }},
+                                                diskon: {{ $diskon }}
+                                            })">
                                 <i class="bi bi-cart-plus me-2"></i> Tambah ke Keranjang
                             </button>
                         </div>
                     </div>
                 </div>
             @endforeach
+
+
         </div>
     </div>
     <section class="text-center my-5 py-5 position-relative bg-light" data-aos="fade-up" style="
