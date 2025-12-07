@@ -6,11 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Keranjang - GusWarung</title>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-    <!-- Google Fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap"
         rel="stylesheet" />
@@ -120,7 +117,6 @@
 </head>
 
 <body>
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg sticky-top shadow-lg" style="background-color: #ffc107">
         <div class="container">
             <a class="navbar-brand text-white fw-bold" href="{{ url('/') }}">
@@ -141,12 +137,6 @@
                     <li class="nav-item">
                         <a class="nav-link text-black active" href="{{ url('/sell') }}">Penjualan</a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link text-black" href="{{ url('/stock') }}">Inventaris</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-black" href="{{ url('/report') }}">Laporan</a>
-                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link text-black" href="{{ url('/about') }}">About</a>
                     </li>
@@ -173,7 +163,6 @@
         </div>
     </nav>
 
-    <!-- Container -->
     <div class="cart-container">
         <h2 class="fw-bold mb-4 text-warning text-center">
             <span class="material-symbols-outlined align-middle">shopping_cart</span>
@@ -181,93 +170,95 @@
         </h2>
 
         <div class="row">
-            <!-- KIRI: Formulir dan pembayaran -->
             <div class="col-md-6">
-                <!-- Informasi Pemesan -->
-                <h5 class="fw-bold mb-3 text-warning">
-                    <span class="material-symbols-outlined align-middle me-1">info</span>
-                    Informasi Pemesanan
-                </h5>
+                {{-- Diubah menjadi Form yang mengarah ke OrderController@placeOrder --}}
+                <form action="{{ route('user.place_order') }}" method="POST" enctype="multipart/form-data"
+                    id="checkoutForm">
+                    @csrf
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Nama Pemesan</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nama lengkap" id="namaPemesan" />
-                </div>
+                    <h5 class="fw-bold mb-3 text-warning">
+                        <span class="material-symbols-outlined align-middle me-1">info</span>
+                        Informasi Pemesanan
+                    </h5>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Nomor Telepon</label>
-                    <input type="tel" class="form-control" placeholder="Contoh: 081234567890" id="nomorTelepon" />
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nama Pemesan</label>
+                        <input type="text" class="form-control" placeholder="Masukkan nama lengkap" id="namaPemesan"
+                            name="customer_name" required />
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Alamat Pengiriman</label>
-                    <textarea class="form-control" rows="3" id="alamatPengiriman"
-                        placeholder="Masukkan alamat lengkap, RT/RW, kecamatan, dan patokan..."></textarea>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nomor Telepon</label>
+                        <input type="tel" class="form-control" placeholder="Contoh: 081234567890" id="nomorTelepon"
+                            name="customer_phone" required />
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Catatan Tambahan</label>
-                    <textarea class="form-control" rows="2" id="catatanTambahan"
-                        placeholder="Contoh: tanpa sambal, nasi setengah, bungkus terpisah..."></textarea>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Alamat Pengiriman</label>
+                        <textarea class="form-control" rows="3" id="alamatPengiriman" name="customer_address"
+                            placeholder="Masukkan alamat lengkap, RT/RW, kecamatan, dan patokan..."></textarea>
+                    </div>
 
-                <hr class="my-4" />
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Catatan Tambahan</label>
+                        <textarea class="form-control" rows="2" id="catatanTambahan" name="notes"
+                            placeholder="Contoh: tanpa sambal, nasi setengah, bungkus terpisah..."></textarea>
+                    </div>
 
-                <!-- Metode Pembayaran -->
-                <h5 class="fw-bold mb-3 text-warning">
-                    <span class="material-symbols-outlined align-middle me-1">credit_card</span>
-                    Metode Pembayaran
-                </h5>
+                    <hr class="my-4" />
 
-                <div class="d-flex align-items-center mb-4">
-                    <select class="form-select payment-select" id="paymentMethod">
-                        <option selected disabled>Pilih metode pembayaran...</option>
-                        <option value="cash">Tunai</option>
-                        <option value="qris">QRIS</option>
-                        <option value="transfer">Transfer Bank</option>
-                    </select>
-                    <img id="paymentLogo" src="" alt="Payment Logo" class="ms-3" width="42" height="42"
-                        style="display: none" />
-                </div>
+                    <h5 class="fw-bold mb-3 text-warning">
+                        <span class="material-symbols-outlined align-middle me-1">credit_card</span>
+                        Metode Pembayaran
+                    </h5>
 
-                <button class="btn btn-checkout" id="btnProsesCheckout">
-                    <span class="material-symbols-outlined align-middle me-1">shopping_bag</span>
-                    Lanjut ke Pembayaran
-                </button>
+                    <div class="d-flex align-items-center mb-4">
+                        <select class="form-select payment-select" id="paymentMethod" name="payment_method" required>
+                            <option value="" selected disabled>Pilih metode pembayaran...</option>
+                            <option value="cash">Tunai (Bayar di Tempat)</option>
+                            <option value="qris">QRIS</option>
+                            <option value="transfer">Transfer Bank</option>
+                        </select>
+                        <img id="paymentLogo" src="" alt="Payment Logo" class="ms-3" width="42" height="42"
+                            style="display: none" />
+                    </div>
 
-                {{-- Modal QRIS Dummy --}}
-                <div class="modal fade" id="qrisModal" tabindex="-1" aria-labelledby="qrisModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content text-center">
-                            <div class="modal-header bg-warning text-white">
-                                <h5 class="modal-title" id="qrisModalLabel">Pembayaran QRIS</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <h5>Total Bayar: <span class="text-warning" id="qrisTotalDisplay">Rp 0</span></h5>
-                                <p class="text-muted">Silakan scan QR Code di bawah ini:</p>
-                                {{-- QRIS Dummy Placeholder --}}
-                                <img src="https://placehold.co/200x200/ffc107/FFF?text=QRIS+Dummy" alt="QRIS Code"
-                                    class="img-fluid my-3 border rounded-lg p-2">
-                                <p class="text-danger">Pembayaran akan otomatis dikonfirmasi setelah Anda scan.</p>
-                            </div>
-                            <div class="modal-footer justify-content-center">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                            </div>
+                    {{-- Area Baru untuk Instruksi & Upload Bukti Pembayaran --}}
+                    <div id="paymentDetailsContainer" style="display: none;">
+                        <hr class="my-4" />
+                        <h5 class="fw-bold mb-3 text-warning">
+                            <span class="material-symbols-outlined align-middle me-1">receipt</span>
+                            Instruksi Pembayaran
+                        </h5>
+
+                        <div id="paymentInstruction" class="alert alert-info py-2 mb-3"></div>
+
+                        <div class="mb-3" id="proofUploadSection">
+                            <label for="proofOfPayment" class="form-label fw-bold">Upload Bukti Pembayaran</label>
+                            <input class="form-control" type="file" id="proofOfPayment" name="proof_of_payment"
+                                accept="image/*" />
+                            <small class="form-text text-muted">Hanya untuk pembayaran QRIS/Transfer. Maks. 2MB.</small>
                         </div>
                     </div>
-                </div>
+                    {{-- End Area Baru --}}
+
+                    <button class="btn btn-checkout" type="submit" id="btnProsesCheckout" disabled>
+                        <span class="material-symbols-outlined align-middle me-1">shopping_bag</span>
+                        Proses Pesanan
+                    </button>
+
+                    {{-- Input tersembunyi untuk mengirim data yang dihitung JS ke Controller --}}
+                    <input type="hidden" name="cart_data" id="cartDataInput">
+                    <input type="hidden" name="total_amount" id="totalAmountInput">
+
+                </form>
 
             </div>
 
-            <!-- KANAN: Item dan Ringkasan -->
             <div class="col-md-6">
                 <div class="cart-summary">
                     <h5 class="fw-bold mb-3 text-center text-warning">Pesanan Anda</h5>
 
-                    <!-- Daftar Item Cart DITEMPATKAN DI SINI -->
                     <div id="cart-items-list">
                         {{-- Content will be dynamically generated by JavaScript --}}
                         <p class="text-center text-muted m-4" id="empty-cart-message">Keranjang kosong. Ayo belanja!</p>
@@ -275,7 +266,6 @@
 
                     <hr />
 
-                    <!-- Ringkasan Total -->
                     <div class="d-flex justify-content-between">
                         <span>Subtotal</span>
                         <span id="subtotal-display">Rp 0</span>
@@ -304,7 +294,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     {{-- Script untuk logic cart dan rendering di halaman checkout --}}
-    {{-- Script untuk logic cart dan rendering di halaman checkout --}}
+    {{-- Diperbarui untuk mendukung form POST dan upload bukti bayar --}}
     <script>
         // =======================================================
         // 🚀 KONSTANTA
@@ -338,7 +328,6 @@
 
         /**
          * Menghitung total biaya.
-         * Ini adalah versi yang sudah diperbaiki agar total harga menjadi 0 jika keranjang kosong.
          */
         function calculateTotals(cart) {
             let subtotal = 0;
@@ -371,8 +360,6 @@
             const index = parseInt(button.dataset.index);
             const action = button.dataset.action;
             let cart = loadCart();
-
-            // Logika cek stok di sini dapat ditambahkan jika diperlukan (mengambil data stok dari item)
 
             if (cart[index]) {
                 if (action === 'increment') {
@@ -411,7 +398,6 @@
          * Mengupdate total biaya di ringkasan.
          */
         function updateSummary(cart) {
-            // Menggunakan nilai finalOngkir yang dihitung (bukan konstanta ONGKIR)
             const { subtotal, ppn, finalOngkir, total } = calculateTotals(cart);
 
             document.getElementById('subtotal-display').textContent = formatRupiah(subtotal);
@@ -419,13 +405,12 @@
             document.getElementById('ongkir-display').textContent = formatRupiah(finalOngkir);
             document.getElementById('total-display').textContent = formatRupiah(total);
 
-            // Update display modal QRIS
-            document.getElementById('qrisTotalDisplay').textContent = formatRupiah(total);
-
             // Menonaktifkan tombol checkout jika keranjang kosong
             const btnCheckout = document.getElementById('btnProsesCheckout');
             if (btnCheckout) {
-                btnCheckout.disabled = cart.length === 0;
+                // Tombol dinonaktifkan jika keranjang kosong ATAU jika metode pembayaran belum dipilih
+                const selectedMethod = document.getElementById('paymentMethod') ? document.getElementById('paymentMethod').value : '';
+                btnCheckout.disabled = cart.length === 0 || selectedMethod === '';
             }
         }
 
@@ -435,19 +420,23 @@
         function renderCart() {
             const cart = loadCart();
             const listContainer = document.getElementById('cart-items-list');
-            const emptyMessage = document.getElementById('empty-cart-message');
+
+            // Simpan elemen empty-cart-message untuk digunakan kembali
+            let emptyMessage = document.getElementById('empty-cart-message');
+            if (!emptyMessage) {
+                emptyMessage = document.createElement('p');
+                emptyMessage.id = 'empty-cart-message';
+                emptyMessage.className = 'text-center text-muted m-4';
+                emptyMessage.textContent = 'Keranjang kosong. Ayo belanja!';
+            }
 
             listContainer.innerHTML = ''; // Kosongkan daftar item
 
             if (cart.length === 0) {
-                // Tampilkan pesan keranjang kosong
-                if (emptyMessage) {
-                    emptyMessage.style.display = 'block';
-                    listContainer.appendChild(emptyMessage);
-                }
+                emptyMessage.style.display = 'block';
+                listContainer.appendChild(emptyMessage);
             } else {
-                // Sembunyikan pesan kosong dan render item
-                if (emptyMessage) emptyMessage.style.display = 'none';
+                emptyMessage.style.display = 'none';
 
                 cart.forEach((item, index) => {
                     const itemTotal = item.price * item.quantity;
@@ -461,10 +450,10 @@
                             <p class="price mb-0">${formatRupiah(itemTotal)}</p>
                         </div>
                         <div class="d-flex align-items-center">
-                            <button class="btn btn-sm btn-outline-danger me-1 btn-update-qty" data-index="${index}" data-action="decrement">-</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger me-1 btn-update-qty" data-index="${index}" data-action="decrement">-</button>
                             <input type="number" class="form-control form-control-sm text-center cart-qty-input" value="${item.quantity}" min="1" style="width: 60px" data-index="${index}" readonly />
-                            <button class="btn btn-sm btn-outline-success ms-1 btn-update-qty" data-index="${index}" data-action="increment">+</button>
-                            <button class="btn btn-sm btn-link text-danger ms-2 btn-remove-item" data-index="${index}">
+                            <button type="button" class="btn btn-sm btn-outline-success ms-1 btn-update-qty" data-index="${index}" data-action="increment">+</button>
+                            <button type="button" class="btn btn-sm btn-link text-danger ms-2 btn-remove-item" data-index="${index}">
                                 <span class="material-symbols-outlined fs-5">delete</span>
                             </button>
                         </div>
@@ -481,7 +470,6 @@
                 });
             }
 
-            // PENTING: Panggil updateSummary di sini untuk memastikan total harga disinkronkan
             updateSummary(cart);
         }
 
@@ -489,54 +477,94 @@
          * Logic Pembayaran & Inisialisasi DOM
          */
         document.addEventListener("DOMContentLoaded", () => {
-            // PENTING: Panggil renderCart() di sini untuk memuat data dari Local Storage saat halaman diakses.
             renderCart();
 
             const select = document.getElementById("paymentMethod");
             const logo = document.getElementById("paymentLogo");
+            const paymentDetailsContainer = document.getElementById("paymentDetailsContainer");
+            const paymentInstruction = document.getElementById("paymentInstruction");
+            const proofUploadSection = document.getElementById("proofUploadSection");
             const btnProsesCheckout = document.getElementById("btnProsesCheckout");
+            const checkoutForm = document.getElementById("checkoutForm");
 
-            // Event listener untuk ganti logo pembayaran
+            // Event listener untuk ganti logo pembayaran dan menampilkan instruksi/form upload
             select.addEventListener("change", () => {
                 const value = select.value;
+                const cart = loadCart();
+                const { total } = calculateTotals(cart);
+
                 logo.style.display = "inline-block";
+                paymentDetailsContainer.style.display = "block"; // Tampilkan container detail
+                proofUploadSection.style.display = "block"; // Default tampilkan upload
+                document.getElementById('proofOfPayment').removeAttribute('required'); // Default tidak wajib
 
                 if (value === "cash") {
-                    logo.src = "https://cdn-icons-png.flaticon.com/512/2331/2331942.png";
+                    logo.src = "https://cdn-icons-png.flaticon.com/512/2331/2331942.png"; // Icon Tunai
+                    paymentInstruction.innerHTML = "Anda memilih Bayar di Tempat. Harap siapkan uang tunai sesuai total tagihan.";
+                    proofUploadSection.style.display = "none"; // Sembunyikan upload untuk Tunai
                 } else if (value === "qris") {
-                    logo.src = "https://images.seeklogo.com/logo-png/39/1/quick-response-code-indonesia-standard-qris-logo-png_seeklogo-391791.png";
+                    logo.src = "/img/qris.jpeg"; // Ganti dengan logo QRIS yang sesuai
+                    paymentInstruction.innerHTML = `
+                        <p class="text-center fw-bold mb-2">SCAN QRIS INI</p>
+                        <img src="/img/qris.jpg" alt="QRIS Code" class="img-fluid my-2 d-block mx-auto border rounded-lg p-2">
+                        <p class="text-center mb-0">Total: <span class="fw-bold text-warning">${formatRupiah(total)}</span></p>
+                        <p class="mt-2 text-danger small">Setelah bayar, **WAJIB** upload bukti transfer di bawah.</p>
+                    `;
+                    document.getElementById('proofOfPayment').setAttribute('required', 'required'); // Wajibkan upload
                 } else if (value === "transfer") {
                     logo.src = "https://i0.wp.com/www.halkidikisuites.com/wp-content/uploads/2023/02/38978-bank-transfer-logo-icon-vector-icon-vector-eps.png?fit=256%2C256&ssl=1";
+                    paymentInstruction.innerHTML = `
+                        Transfer ke **Bank XYZ - VA 1234567890** a/n GusWarung.
+                        <br>Total: <span class="fw-bold text-warning">${formatRupiah(total)}</span>
+                        <p class="mt-2 text-danger small">Setelah transfer, **WAJIB** upload bukti transfer di bawah.</p>
+                    `;
+                    document.getElementById('proofOfPayment').setAttribute('required', 'required'); // Wajibkan upload
                 } else {
                     logo.style.display = "none";
+                    paymentDetailsContainer.style.display = "none";
                 }
+
+                // Pastikan tombol checkout diaktifkan jika metode pembayaran dipilih
+                updateSummary(cart); // Update status tombol checkout
             });
 
-            // Event listener untuk tombol Lanjut ke Pembayaran
-            btnProsesCheckout.addEventListener('click', () => {
-                const selectedMethod = document.getElementById('paymentMethod').value;
-                const totalAmount = calculateTotals(loadCart()).total;
+            // Mengganti Event Listener tombol Proses Checkout (Sekarang Submit Form)
+            checkoutForm.addEventListener('submit', (event) => {
+                const cart = loadCart();
 
-                if (selectedMethod === 'Pilih metode pembayaran...' || totalAmount === 0) {
-                    console.warn("Mohon pilih metode pembayaran dan pastikan keranjang tidak kosong.");
-                    alert("Mohon pilih metode pembayaran dan pastikan keranjang tidak kosong."); // Menggunakan alert agar terlihat oleh pengguna
+                if (cart.length === 0) {
+                    event.preventDefault(); // Cegah submit
+                    alert("Keranjang kosong. Tidak dapat memproses pesanan.");
                     return;
                 }
 
-                if (selectedMethod === 'qris') {
-                    const qrisModal = new bootstrap.Modal(document.getElementById('qrisModal'));
-                    qrisModal.show();
-                } else {
-                    const nama = document.getElementById('namaPemesan').value || 'Pelanggan';
-                    const message = `Pesanan a/n ${nama} sebesar ${formatRupiah(totalAmount)} berhasil diproses dengan metode ${selectedMethod.toUpperCase()}. Terima kasih!`;
+                const { total } = calculateTotals(cart);
 
-                    // *Simulasi Order Selesai*
-                    localStorage.removeItem(CART_STORAGE_KEY);
-                    renderCart(); // Render ulang (keranjang jadi kosong)
+                // 1. Validasi manual untuk input file jika QRIS/Transfer
+                const selectedMethod = document.getElementById('paymentMethod').value;
+                const proofFile = document.getElementById('proofOfPayment').files[0];
 
-                    alert(message);
+                if ((selectedMethod === 'qris' || selectedMethod === 'transfer') && !proofFile) {
+                    // Cek jika tombol submit yang diklik, bukan yang lain (sudah ditangani oleh 'required' atribut)
+                    // Jika Anda menggunakan logika JS yang kompleks, ini membantu validasi
                 }
+
+                // 2. Isi input tersembunyi dengan data yang dibutuhkan server
+                // Data keranjang di-stringify menjadi JSON string
+                document.getElementById('cartDataInput').value = JSON.stringify(cart);
+                document.getElementById('totalAmountInput').value = total;
+
+                // Jika semua validasi lolos, form akan disubmit secara alami ke route Laravel
+
+                // Opsional: Hapus keranjang setelah submit, untuk pengalaman pengguna yang lebih baik
+                // Namun, kita tidak menghapus di sini karena ingin menunggu konfirmasi dari server (Controller)
+                // localStorage.removeItem(CART_STORAGE_KEY); 
             });
+
+            // Panggil change event saat DOM load jika ada metode yang tersisa dari reload
+            if (select.value && select.value !== '') {
+                select.dispatchEvent(new Event('change'));
+            }
         });
     </script>
 </body>

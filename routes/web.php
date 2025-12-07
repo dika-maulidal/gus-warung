@@ -2,24 +2,23 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SesiController;
-use App\Http\Controllers\MenuController; // Untuk /sell
-use App\Http\Controllers\Admin\ProductController; // Untuk CRUD Produk Admin
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\OrderManagementController; // 💡 Pastikan Anda menggunakan nama controller ini!
+
 
 /*
 |--------------------------------------------------------------------------
 | Route Otentikasi & Public
 |--------------------------------------------------------------------------
+| ... (Tidak berubah)
 */
 
 // Halaman utama / Login (Routes Teman)
 Route::get('/', [SesiController::class, 'index'])->name('login');
 Route::post('/', [SesiController::class, 'login']);
-
-// Registrasi (Routes Teman)
 Route::get('/register', [SesiController::class, 'formRegister'])->name('register');
 Route::post('/register', [SesiController::class, 'register'])->name('register.action');
-
-// Logout (Routes Teman)
 Route::get('/logout', [SesiController::class, 'logout'])->name('logout');
 
 
@@ -30,30 +29,39 @@ Route::get('/logout', [SesiController::class, 'logout'])->name('logout');
 */
 Route::middleware(['admin'])->group(function () {
 
-    // 1. Dashboard Admin (Rute /admin, diubah dari view('home') menjadi view('admin.dashboard'))
+    // 1. Dashboard Admin
     Route::get('/admin', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    // 2. Manajemen Produk (CRUD Products - Rute Anda)
+    // 2. Manajemen Produk (CRUD Products)
     Route::prefix('admin/products')->name('admin.products.')->controller(ProductController::class)->group(function () {
-        Route::get('/', 'index')->name('index');                // GET /admin/products (Tabel Produk)
-        Route::get('/create', 'create')->name('create');        // GET /admin/products/create (Form Tambah)
-        Route::post('/', 'store')->name('store');               // POST /admin/products
-        Route::get('/{menu}/edit', 'edit')->name('edit');       // GET /admin/products/{menu}/edit (Form Edit)
-        Route::put('/{menu}', 'update')->name('update');        // PUT/PATCH /admin/products/{menu}
-        Route::delete('/{menu}', 'destroy')->name('destroy');   // DELETE /admin/products/{menu}
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{menu}/edit', 'edit')->name('edit');
+        Route::put('/{menu}', 'update')->name('update');
+        Route::delete('/{menu}', 'destroy')->name('destroy');
     });
 
-    // 3. Routes Admin Tambahan dari Teman
-    Route::get('/stock', function () {
-        return view('inventaris'); // Rute Inventaris (Stock)
-    })->name('admin.stock.index'); // <-- INI YANG HARUS DITAMBAHKA
-    Route::get('/report', function () {
-        return view('laporan'); // Rute Laporan
+    // 3. Manajemen Stok (Perbaiki URL prefix untuk konsistensi)
+    Route::get('/admin/stock', function () {
+        return view('inventaris'); // Ganti dengan controller jika ada logika data
+    })->name('admin.stock.index');
+
+    // 4. ✨ ROUTE BARU: Kelola Pesanan & Pembayaran (Menggunakan Resource)
+    Route::resource('admin/orders', App\Http\Controllers\Admin\OrderManagementController::class)
+        ->only(['index', 'show'])
+        ->names('admin.orders');
+
+    Route::put('admin/orders/{order}/status', [\App\Http\Controllers\Admin\OrderManagementController::class, 'updateStatus'])
+        ->name('admin.orders.update_status');
+    // 5. Rute Admin Lain
+    Route::get('/admin/report', function () {
+        return view('laporan');
     });
-    Route::get('/setting', function () {
-        return view('pengaturan'); // Rute Pengaturan
+    Route::get('/admin/setting', function () {
+        return view('pengaturan');
     });
 });
 
@@ -62,38 +70,30 @@ Route::middleware(['admin'])->group(function () {
 |--------------------------------------------------------------------------
 | Route User (Memerlukan Middleware 'user')
 |--------------------------------------------------------------------------
+| ... (Tidak berubah)
 */
 Route::middleware(['user'])->group(function () {
 
-    // 1. Dashboard User (Routes Teman)
     Route::get('/user', function () {
         return view('userhome');
     })->name('user.dashboard');
 
-    // 2. Routes User Tambahan (Menggabungkan Rute Teman dan Rute Baru)
-    Route::get('/sell', [MenuController::class, 'penjualan'])->name('user.sell'); // Penjualan
-
+    Route::get('/sell', [MenuController::class, 'penjualan'])->name('user.sell');
     Route::get('/about', function () {
-        return view('userabout'); // User About
+        return view('userabout');
     });
-
-    // Note: Saya tidak menyertakan '/sell' dan '/about' versi admin/non-user karena biasanya 
-    // routes ini spesifik untuk tampilan user atau harus berada di bawah middleware admin.
-
     Route::get('/checkout', function () {
-        return view('keranjang'); // Keranjang (Checkout)
-    });
+        return view('keranjang');
+    })->name('user.checkout');
+    Route::post('/checkout/place-order', [\App\Http\Controllers\OrderController::class, 'placeOrder'])->name('user.place_order');
 });
 
 /*
 |--------------------------------------------------------------------------
-| Route Public / General (Akses tanpa Login/Role)
+| Route Public / General
 |--------------------------------------------------------------------------
+| ... (Tidak berubah)
 */
-
-// Rute 'about' yang paling terakhir dan kemungkinan dimaksudkan untuk tampilan umum
 Route::get('/about', function () {
     return view('about');
 });
-
-// Jika ada rute lain yang umum (misalnya homepage publik), letakkan di sini.
